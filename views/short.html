@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Session Persists Test</title>
+    <style>
+        div { margin: .75em; }
+        input { margin-left: 2em;}
+    </style>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const formatDateTime = function (date_ob) {
+                let date = ("0" + date_ob.getDate()).slice(-2);
+                let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+                let year = date_ob.getFullYear();
+                let hours = ("0" + date_ob.getHours()).slice(-2);
+                let minutes = ("0" + date_ob.getMinutes()).slice(-2);
+                let seconds = ("0" + date_ob.getSeconds()).slice(-2);
+                return `${month}-${date}-${year} ${hours}:${minutes}:${seconds}`;
+            };
+
+            const updateTimes = () => {
+                let now_token = formatDateTime(new Date());
+                let session_now_token = sessionStorage.getItem('now_token');
+
+                if (session_now_token == null) {
+                    session_now_token = now_token;
+                    sessionStorage.setItem('now_token', session_now_token);
+                }
+                $("#sessionTime").text(`Session Time: ${session_now_token}`);
+                $("#lastCall").text(`Current Time: ${now_token}`);
+            }
+
+            $("#updateSession").click(function () {
+                sessionStorage.clear();
+                location.reload();
+            });
+
+            $('#updateTime').click(updateTimes);
+
+            updateTimes();
+        });
+    </script>
+</head>
+<body>
+<h1>Session Persists Test</h1>
+<div><span id="sessionTime">Session Time: (please enable Javascript not running>)</span><input id="updateSession" type="button" value="Update Session Time"></div>
+<div><span id="lastCall">Current Time: (please enable Javascript not running>)</span><input id="updateTime" type="button" value="Update Current Time (or press F5)"></div>
+</body>
+</html>

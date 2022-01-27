@@ -28,6 +28,10 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '\\views\\index.html'));
 });
 
+app.get('/short', (req, res) => {
+    res.sendFile(path.join(__dirname, '\\views\\short.html'));
+});
+
 app.get('/server', (req, res) => {
     res.sendFile(path.join(__dirname, '\\index.html'));
 });

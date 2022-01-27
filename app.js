@@ -28,6 +28,10 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '\\views\\index.html'));
 });
 
+app.get('/server', (req, res) => {
+    res.sendFile(path.join(__dirname, '\\index.html'));
+});
+
 app.get('/now_token', (req, res) => {
     let now_token = getNowToken();
     res.send({now_token});

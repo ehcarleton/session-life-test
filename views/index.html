@@ -4,66 +4,46 @@
     <meta charset="UTF-8">
     <title>Session Life Test</title>
     <style>
-        div { margin: .75em;         }
+        div {
+            margin: .75em;
+        }
     </style>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script>
-
         $(document).ready(function () {
-            const getNow = () => new Promise((resolve, reject) => {
-                $.ajax({
-                    type: "GET", url: "now_token", encode: true,
-                    success: function (data) {
-                        resolve(data)
-                    },
-                    error: function (error) {
-                        reject(error)
-                    },
-                })
-            });
+            const formatDateTime = function (date_ob) {
+                let date = ("0" + date_ob.getDate()).slice(-2);
+                let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+                let year = date_ob.getFullYear();
+                let hours = ("0" + date_ob.getHours()).slice(-2);
+                let minutes = ("0" + date_ob.getMinutes()).slice(-2);
+                let seconds = ("0" + date_ob.getSeconds()).slice(-2);
+                return `${month}-${date}-${year} ${hours}:${minutes}:${seconds}`;
+            };
 
-            const setNows = (sessionNow, currentNow) => {
+            const setTimesText = (sessionNow, currentNow) => {
                 $("#sessionTime").text(`Session Time: ${sessionNow}`);
                 $("#lastCall").text(`Current Time: ${currentNow}`);
             };
 
-            const updateSessionTime =  () => {
-                getNow().then((data) => {
-                    if ('now_token' in data) {
-                        sessionStorage.setItem('now_token', JSON.stringify(data.now_token));
-                        setNows(data.now_token.now, `${data.now_token.now}  (F5 to update)`);
-                    } else {
-                        setNows(data, data);
-                    }
-                }).catch(error => {
-                        setNows(error, error);
-                    }
-                );
+            const updateSessionTime = () => {
+                let now_token = formatDateTime(new Date());
+                sessionStorage.setItem('now_token', JSON.stringify(now_token));
+                setTimesText(now_token, `${now_token}  (F5 to update)`);
             }
 
-            let nowToken = null;
-            try{
-                let nowObjStr = sessionStorage.getItem('now_token');
-                nowToken = JSON.parse(nowObjStr);
-            } catch(e) {}
-
-            if (nowToken == null ) {
+            try {
+                let session_now_token = JSON.parse(sessionStorage.getItem('now_token'));
+                let now_token = formatDateTime(new Date());
+                setTimesText(session_now_token, `${now_token}  (F5 to update)`);
+            } catch (e) {
                 updateSessionTime();
-            } else {
-                getNow().then((data) => {
-                    if ('now_token' in data) {
-                        setNows(nowToken.now, `${data.now_token.now}  (F5 to update)`);
-                    } else {
-                        setNows(nowToken.now, data);
-                    }
-                }).catch(error => {
-                    setNows(nowToken.now, error);
-                });
             }
 
             $("#clearSession").click(function () {
                 sessionStorage.clear();
-                setNows('time cleared', 'time cleared');
+                let now_token = formatDateTime(new Date());
+                setTimesText('session cleared', `${now_token}  (F5 to update)`);
             });
 
             $("#updateSession").click(updateSessionTime);
@@ -76,23 +56,30 @@
 <div id="lastCall">Current Time: (please enable Javascript not running>)</div>
 <H3>Test of how the browser session works.</H3>
 <div>
-    <p>Google Chrome Version 97.0.4692.99 on Windows is not clearing the session when restoring from a tab.  This site has been created to test and demo that issue.</p>
+    <p>Google Chrome Version 97.0.4692.99 on Windows is not clearing the session when restoring from a tab. This site
+        has been created to test and demo that issue.</p>
     <ul>
-        <li>When this page is first loaded (or the Update Session time button is pressed) the session variable with the time is updated from the server.</li>
+        <li>When this page is first loaded (or the Update Session time button is pressed) the session variable with the
+            time is updated from the server.
+        </li>
         <li>Each time the browser is refreshed (F5) the current time is updated.</li>
         <li>When a new tab opened to this site, the there will be a new session storage and a new session time.</li>
     </ul>
     <h3>The Problem:</h3>
     <p>With Google Chrome Version 97.0.4692.99 on Windows do the following:</p>
     <ol>
-        <li>Make sure there is at least one other tab or instance of Chrome open, whether or not there is a website loaded is not relevant.</li>
+        <li>Make sure there is at least one other tab or instance of Chrome open, whether or not there is a website
+            loaded is not relevant.
+        </li>
         <li>Load this site and record the session time.</li>
         <li>Close the tab that is displaying this site.</li>
         <li>Open either a new tab or new instance of Chrome.</li>
         <li>Go to the browser History and restore the tab that was just closed.</li>
     </ol>
-    <p>The session time is the same time recorded in step 2.  As long as there is at least one instance of Chrome running, when restoring from history, the session will also be restored.</p>
-    <p>This is not the way eitehr Edge or Firefox is currently working.  Both created a new session.  Which browser is working correctly?</p>
+    <p>The session time is the same time recorded in step 2. As long as there is at least one instance of Chrome
+        running, when restoring from history, the session will also be restored.</p>
+    <p>This is not the way eitehr Edge or Firefox is currently working. Both created a new session. Which browser is
+        working correctly?</p>
 </div>
 <div><input id="clearSession" type="button" value="Clear Session"></div>
 <div><input id="updateSession" type="button" value="Update Session Time"></div>

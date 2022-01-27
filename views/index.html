@@ -2,11 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Session Life Test</title>
+    <title>Session Persists Test</title>
     <style>
-        div {
-            margin: .75em;
-        }
+        div { margin: .75em; }
+        input { margin-left: 2em;}
     </style>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script>
@@ -21,40 +20,34 @@
                 return `${month}-${date}-${year} ${hours}:${minutes}:${seconds}`;
             };
 
-            const setTimesText = (sessionNow, currentNow) => {
-                $("#sessionTime").text(`Session Time: ${sessionNow}`);
-                $("#lastCall").text(`Current Time: ${currentNow}`);
-            };
-
-            const updateSessionTime = () => {
+            const updateTimes = () => {
                 let now_token = formatDateTime(new Date());
-                sessionStorage.setItem('now_token', JSON.stringify(now_token));
-                setTimesText(now_token, `${now_token}  (F5 to update)`);
+                let session_now_token = sessionStorage.getItem('now_token');
+
+                if (session_now_token == null) {
+                    session_now_token = now_token;
+                    sessionStorage.setItem('now_token', session_now_token);
+                }
+                $("#sessionTime").text(`Session Time: ${session_now_token}`);
+                $("#lastCall").text(`Current Time: ${now_token}`);
             }
 
-            try {
-                let session_now_token = JSON.parse(sessionStorage.getItem('now_token'));
-                let now_token = formatDateTime(new Date());
-                setTimesText(session_now_token, `${now_token}  (F5 to update)`);
-            } catch (e) {
-                updateSessionTime();
-            }
-
-            $("#clearSession").click(function () {
+            $("#updateSession").click(function () {
                 sessionStorage.clear();
-                let now_token = formatDateTime(new Date());
-                setTimesText('session cleared', `${now_token}  (F5 to update)`);
+                location.reload();
             });
 
-            $("#updateSession").click(updateSessionTime);
+            $('#updateTime').click(updateTimes);
+
+            updateTimes();
         });
     </script>
 </head>
 <body>
-<h1>Session Life Test</h1>
-<div id="sessionTime">Session Time: (please enable Javascript not running>)</div>
-<div id="lastCall">Current Time: (please enable Javascript not running>)</div>
-<H3>Test of how the browser session works.</H3>
+<h1>Session Persists Test</h1>
+<div><span id="sessionTime">Session Time: (please enable Javascript not running>)</span><input id="updateSession" type="button" value="Update Session Time"></div>
+<div><span id="lastCall">Current Time: (please enable Javascript not running>)</span><input id="updateTime" type="button" value="Update Current Time (or press F5)"></div>
+<H3>Testing of how long a browser session persists.</H3>
 <div>
     <p>Google Chrome Version 97.0.4692.99 on Windows is not clearing the session when restoring from a tab. This site
         has been created to test and demo that issue.</p>
@@ -81,7 +74,5 @@
     <p>This is not the way eitehr Edge or Firefox is currently working. Both created a new session. Which browser is
         working correctly?</p>
 </div>
-<div><input id="clearSession" type="button" value="Clear Session"></div>
-<div><input id="updateSession" type="button" value="Update Session Time"></div>
 </body>
 </html>

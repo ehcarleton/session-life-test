@@ -49,7 +49,7 @@
 <div><span id="lastCall">Current Time: (please enable Javascript not running>)</span><input id="updateTime" type="button" value="Update Current Time (or press F5)"></div>
 <H3>Testing of how long a browser session persists.</H3>
 <div>
-    <p>Google Chrome Version 97.0.4692.99 on Windows is not clearing the session when restoring from a tab. This site
+    <p>Google Chrome Version 97.0.4692.99 on Windows is not clearing the session when restoring a tab from the history. This site
         has been created to test and demo that issue.</p>
     <ul>
         <li>When this page is first loaded (or the Update Session time button is pressed) the session variable with the
@@ -59,7 +59,7 @@
         <li>When a new tab opened to this site, the there will be a new session storage and a new session time.</li>
     </ul>
     <h3>The Problem:</h3>
-    <p>With Google Chrome Version 97.0.4692.99 on Windows do the following:</p>
+    <p>A new session is NOT create when restoring a tab from history.  To reproduce, using Google Chrome on Windows do the following:</p>
     <ol>
         <li>Make sure there is at least one other tab or instance of Chrome open, whether or not there is a website
             loaded is not relevant.
